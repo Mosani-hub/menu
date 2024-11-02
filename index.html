@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Untitled</title>
+  
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardápio Online</title>
+    <style>
+        /* Estilos gerais */
+        body {
+            background-color: #000;
+            color: #3D5300;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            position: relative;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .banner {
+            width: 100%;
+            max-height: 150px;
+            opacity: 0.8;
+        }
+        h1 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #3D5300;
+            font-size: 1.5em;
+            margin: 0;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+        }
+        
+        /* Estilos do menu */
+        .menu-category {
+            margin: 15px;
+            padding: 15px;
+            border: 1px solid #3D5300;
+            border-radius: 10px;
+        }
+        .item label {
+            font-size: 1em;
+        }
+        .add-button, .whatsapp-button {
+            width: 90%;
+            max-width: 300px;
+            padding: 10px;
+            margin: 10px auto;
+            background-color: #859F3D;
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            display: block;
+        }
+        .whatsapp-button {
+            background-color: #25D366;
+            color: #fff;
+        }
+        .order-list {
+            margin: 10px;
+            color: #FFD700;
+        }
+        .total-price {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #87CEEB;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="https://lh3.googleusercontent.com/pw/AP1GczO5gA3szOwIaGpRokq3oMRFEIcJNlQZXLJvHeYmHWTzN_0mr4Tv2IryQ-mbGLvytW9x6EhzVThlXpTzhsCTIRn8TMgr4NmqEPhjqJq834mTFyNHAVu-Htw1quM48NvDnslfyPlv9mA4WMcPqg00bMbvDw=w1020-h300-s-no-gm?authuser=0" alt="Banner do Cardápio" class="banner">
+       
+    </header>
+
+    <div class="menu-category">
+        <h2>Empadas</h2>
+
+        <div class="item">
+            <label for="flavor">Recheio e Preço:</label>
+            <select id="flavor">
+                <option value="Frango - Pequena - R$8.00" data-price-small="8.00" data-price-medium="17.00" data-price-large="34.00">Frango - Pequena (R$8.00)</option>
+                <option value="Frango - Média - R$17.00" data-price-small="8.00" data-price-medium="17.00" data-price-large="34.00">Frango - Média (R$17.00)</option>
+                <option value="Frango - Grande - R$34.00" data-price-small="8.00" data-price-medium="17.00" data-price-large="34.00">Frango - Grande (R$34.00)</option>
+                <option value="Frango com Catupiry - Pequena - R$8.00" data-price-small="8.00" data-price-medium="17.00" data-price-large="34.00">Frango com Catupiry - Pequena (R$9.00)</option>
+                <option value="Frango com Catupiry - Média - R$17.00" data-price-small="8.00" data-price-medium="17.00" data-price-large="13.00">Frango com Catupiry - Média (R$18.00)</option>
+                <option value="Frango com Catupiry - Grande - R$36.00" data-price-small="9.00" data-price-medium="18.00" data-price-large="36.00">Frango com Catupiry - Grande (R$36.00)</option>
+            </select>
+        </div>
+
+        <div class="item">
+            <label for="quantity">Quantidade:</label>
+            <input type="number" id="quantity" min="1" max="10" value="1">
+        </div>
+
+        <button class="add-button" onclick="addToOrder()">Adicionar ao Pedido</button>
+    </div>
+
+    <h3>Pedido:</h3>
+    <div class="order-list" id="orderList"></div>
+    <p class="total-price">Valor Total: R$ <span id="totalPrice">0.00</span></p>
+
+    <button class="whatsapp-button" onclick="sendWhatsAppMessage()">Finalizar Pedido no WhatsApp</button>
+
+    <script>
+        let order = [];
+        let totalOrderPrice = 0;
+
+        function addToOrder() {
+            const flavorSelect = document.getElementById("flavor");
+            const selectedFlavor = flavorSelect.options[flavorSelect.selectedIndex].value;
+            const flavorText = flavorSelect.options[flavorSelect.selectedIndex].textContent;
+            const quantity = parseInt(document.getElementById("quantity").value);
+
+            const pricePerItem = parseFloat(flavorSelect.options[flavorSelect.selectedIndex].dataset.priceSmall);
+            const itemTotalPrice = (pricePerItem * quantity).toFixed(2);
+            totalOrderPrice += parseFloat(itemTotalPrice);
+
+            order.push(`${quantity} x ${flavorText} - Total: R$${itemTotalPrice}`);
+            displayOrder();
+        }
+
+        function displayOrder() {
+            const orderList = document.getElementById("orderList");
+            orderList.innerHTML = order.map(item => `<p>${item}</p>`).join('');
+            document.getElementById("totalPrice").innerText = totalOrderPrice.toFixed(2);
+        }
+
+        function sendWhatsAppMessage() {
+            const message = `Olá, gostaria de fazer o seguinte pedido:\n\n${order.join('\n')}\n\nValor Total: R$${totalOrderPrice.toFixed(2)}`;
+            const whatsappUrl = `https://wa.me/5517993690812?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+    </script>
+
+</body>
+</html>
+<!-- partial -->
+  
+</body>
+</html>
